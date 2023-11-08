@@ -144,7 +144,7 @@ class Header(tb.Frame):
             "folder_name": "banC"
         }
         print(payload)
-        requests_thread = threading.Thread(target=requests.post, kwargs={'url': "http://127.0.0.1:8888/run_simulation",'json': payload})
+        requests_thread = threading.Thread(target=requests.post, kwargs={'url': "http://127.0.0.1:8888/run_simulation",'json': self.master.ListNode})
         requests_thread.start()
         # requests.post("http://127.0.0.1:8888/run_simulation",json = payload)
         self.waiting_thread = requests_thread

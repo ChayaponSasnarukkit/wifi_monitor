@@ -1,1 +1,2 @@
-ttkbootst
+ttkbootstrap
+requests
