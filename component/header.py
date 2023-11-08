@@ -2,6 +2,7 @@ import tkinter as tk
 import ttkbootstrap as tb
 from tkinter import messagebox
 import requests
+import threading
 import time
 
 class Header(tb.Frame):
@@ -98,18 +99,26 @@ class Header(tb.Frame):
     def disable_mousewheel(self,event):
         return "break"
     
+    def check_thread(self):
+        if self.waiting_thread.is_alive():
+            self.popup.after(100, self.check_thread)
+        else:
+            self.popup.destroy()
+
     def run_scenario(self):
-        self.popup = tb.Toplevel(self)
+        print(self.master)
+        self.popup = tk.Toplevel(self.master)
         self.popup.title("run scenario")
         self.popup.resizable(False, False)
         self.popup.geometry(f"200x100+{self.master.winfo_x()+210}+{self.master.winfo_y()+150}")
         self.frame = tk.Frame(self.popup)
         self.frame.pack(expand=True)
         self.l1 = tk.Label(self.frame,text="running . . .")
+        self.l1.pack()
 
         payload = {
             "nodes": {
-            "192.168.137.239": [
+            "192.168.137.215": [
                 {
                     "type": "client",
                     "configuration": {
@@ -134,11 +143,14 @@ class Header(tb.Frame):
             "duration": 10,
             "folder_name": "banC"
         }
-
-        requests.post("http://127.0.0.1:8888/run_simulation",json = payload)
-
+        print(payload)
+        requests_thread = threading.Thread(target=requests.post, kwargs={'url': "http://127.0.0.1:8888/run_simulation",'json': payload})
+        requests_thread.start()
+        # requests.post("http://127.0.0.1:8888/run_simulation",json = payload)
+        self.waiting_thread = requests_thread
         self.popup.grab_set()
-        self.popup.wait_window()
+        self.popup.after(0, self.check_thread)
+        self.popup.mainloop()
 
     def __init__(self, master):
         super().__init__(master)
