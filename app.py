@@ -13,7 +13,7 @@ class MyApp(tk.Tk):
         regexp = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})$"
         if bool(re.match(regexp, node_ip)) :
             #to do check duplicate ip
-            self.node = Node(self.subframeBody,self.no,node_ip,"Client",[])
+            self.node = Node(self.subframeBody,self.no,node_ip,"client","","","","","","DHCP","RealTime",2.4,"")
             self.no+=1
             self.node.pack(padx=10, pady=10,anchor="w")
             self.ListObjectNode.append(self.node)
@@ -26,6 +26,33 @@ class MyApp(tk.Tk):
 
     def on_enter(self,event):
         self.button.invoke()
+
+    def convert_to_json(self):
+        self.ListNode = {"nodes":{},"server":{},"duration":10,"folder_name":"banC"}
+        for e in self.ListObjectNode :
+            if e.mode.get() == "server" :
+                self.ListNode["server"]["ssid"] = e.e_ssid.get()
+                self.ListNode["server"]["password"] = e.e_password.get()
+                self.ListNode["server"]["ip_address"] = e.e_ip.get()
+                self.ListNode["server"]["net_mask"] = e.e_subnet.get()
+                self.ListNode["server"]["gateway_address"] = e.e_gateway.get()
+                self.ListNode["server"]["interface_mode"] = e.interface_mode.get()
+            elif e.mode.get() == "client" :
+                print("ok")
+                self.ListNode["nodes"][e.node_ip] = [{"type":"","configuration":{}}]
+                self.ListNode["nodes"][e.node_ip][0]["type"] = e.mode.get()
+                self.ListNode["nodes"][e.node_ip][0]["configuration"]["client_ip"] = e.e_ip.get()
+                self.ListNode["nodes"][e.node_ip][0]["configuration"]["gateway_ip"] = e.e_gateway.get()
+                self.ListNode["nodes"][e.node_ip][0]["configuration"]["ap_name"] = e.e_ssid.get()
+                self.ListNode["nodes"][e.node_ip][0]["configuration"]["password"] = e.e_password.get()
+                self.ListNode["nodes"][e.node_ip][0]["configuration"]["netmask"] = e.e_subnet.get()
+                self.ListNode["nodes"][e.node_ip][0]["configuration"]["interface_mode"] = e.interface_mode.get()
+                self.ListNode["nodes"][e.node_ip][0]["configuration"]["protocol"] = e.protocol.get()
+                self.ListNode["nodes"][e.node_ip][0]["configuration"]["channel"] = e.channel.get()
+                self.ListNode["nodes"][e.node_ip][0]["configuration"]["server_ip"] = e.server_ip
+            
+        print(self.ListNode)
+                
     
     def node_popup(self):
         self.popup = tb.Toplevel(self)
@@ -47,11 +74,9 @@ class MyApp(tk.Tk):
         self.popup.wait_window()
 
     def display(self):
-        self.no = len(self.ListNode)
-        for i in range(len(self.ListNode)) :
-            self.node = Node(self.subframeBody, self.no, self.ListNode[i]["node_ip"],self.ListNode[i]["mode"],self.ListNode[i]["config"])
-            self.node.pack(padx=10, pady=10,anchor="w")
-            self.no += 1
+        self.no = 1
+        #todo
+        self.no += 1
         self.subframeBody.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
@@ -85,7 +110,20 @@ class MyApp(tk.Tk):
         self.Describe = tk.StringVar()
         self.Describe.set(".....")
         #to do when create object server mode must create dump
-        self.ListNode = [{"mode" : "Server","node_ip":"host","config" : [{"client_ip": "", "netmask": "", "gateway_ip": "", "ssid": "", "password": ""}]}]
+        self.ListNode = {
+            "nodes": {
+            },
+            "server": {
+                "ssid": "",
+                "password": "",
+                "ip_address": "",
+                "net_mask": "",
+                "gateway_address": "",
+                "interface_mode": "DHCP"
+            },
+            "duration": 10,
+            "folder_name": "banC"
+        }
         self.ListObjectNode = []
 
         self.header = Header(self)
@@ -98,7 +136,7 @@ class MyApp(tk.Tk):
         self.button.configure(bg="white",activebackground="white")
         
         self.scan_node_icon = tk.PhotoImage(file="icon/scan_node.png")
-        self.button = tk.Button(self.framemiddle, image=self.scan_node_icon,compound=tk.CENTER, width=77, height=30)
+        self.button = tk.Button(self.framemiddle, image=self.scan_node_icon,compound=tk.CENTER, width=77, height=30, command=self.convert_to_json)
         self.button.configure(bg="white",activebackground="white")
         self.button.grid(row=0, column=1, padx=5)
         self.framemiddle.pack(padx=25,pady=5,anchor="w")
@@ -123,6 +161,10 @@ class MyApp(tk.Tk):
         #self.canvas.config(width=600)
 
         self.update()
+
+        self.node = Node(self.subframeBody, 1, "host", "server", self.ListNode["server"]["ssid"], self.ListNode["server"]["password"], self.ListNode["server"]["ip_address"], self.ListNode["server"]["net_mask"], self.ListNode["server"]["gateway_address"], self.ListNode["server"]["interface_mode"],"","","")
+        self.node.pack(padx=10, pady=10,anchor="w")
+        self.ListObjectNode.append(self.node)
 
         self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
 

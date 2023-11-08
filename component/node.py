@@ -51,20 +51,28 @@ class Node(tb.Frame):
             self.e_subnet["state"] = "normal"
             self.e_gateway["state"] = "normal"
 
-    def __init__(self, master, index, node_ip, mode, config):
+    def __init__(self, master, index,node_ip, mode, ssid, password, ip_address, net_mask, gateway_address, interface_mode, protocol, channel, server_ip):
         super().__init__(master)
+        #Server
         self.master = master
+        self.index = index
         self.node_ip = node_ip
         self.mode = tk.StringVar()
         self.mode.set(mode)
-        self.config = config
-        self.index = index
+        self.ssid = ssid
+        self.password = password
+        self.ip_address = ip_address
+        self.net_mask = net_mask
+        self.gateway_address = gateway_address
         self.interface_mode = tk.StringVar()
-        self.interface_mode.set("DHCP")
+        self.interface_mode.set(interface_mode)
+        self.server_ip = "192.168.227.51"
+
+        #client
         self.protocol = tk.StringVar()
-        self.protocol.set("Real time")
-        self.channel = tk.StringVar()
-        self.channel.set("2.4 GHz")
+        self.protocol.set(protocol)
+        self.channel = tk.IntVar()
+        self.channel.set(channel)
         
         self.frame = tb.Labelframe(self, text=f"no.{self.index}",bootstyle="dark",style="Custom.TLabelframe")
         tb.Label(self.frame, text=f"node ip : ").grid(row=0, column=0,padx=5,pady=5)
@@ -108,8 +116,8 @@ class Node(tb.Frame):
         self.show_button.grid(padx=5,pady=5,row=0, column=4)
         self.f.grid(row=2, column=1,padx=(0,5),pady=5,sticky="w",columnspan=4)
 
-        if self.mode.get() == "Server" :
-            self.modeCB = tb.Combobox(self.frame, textvariable=self.mode, value="Server", state="readonly")
+        if self.mode.get() == "server" :
+            self.modeCB = tb.Combobox(self.frame, textvariable=self.mode, value="server", state="readonly")
             self.modeCB.grid(row=0, column=3,padx=(0,5),pady=5,sticky='w')
             self.modeCB.bind("<MouseWheel>", self.disable_mousewheel)
         else :
@@ -129,7 +137,7 @@ class Node(tb.Frame):
             self.cb_protocol.grid(pady=5,row=0,column=1)
             self.cb_protocol.bind("<MouseWheel>", self.disable_mousewheel)
             tb.Label(self.f, text="channel bandwidth : ",).grid(padx=5,pady=5,row=0, column=2)
-            self.cb_channel = tb.Combobox(self.f, textvariable=self.channel,values=["2.4 GHz","5 GHz"], state="readonly")
+            self.cb_channel = tb.Combobox(self.f, textvariable=self.channel,values=[2.4,5], state="readonly")
             self.cb_channel.grid(pady=5,row=0,column=3)
             self.cb_channel.bind("<MouseWheel>", self.disable_mousewheel)
             self.f.grid(row=3, column=1,padx=(0,5),pady=5,sticky="w",columnspan=4)
