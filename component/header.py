@@ -19,6 +19,37 @@ class Header(tb.Frame):
     def on_combobox_select(self, event):
         selected_value = self.combobox.get()
         self.combobox.selection_clear()
+        self.master.ListNode = {
+                "nodes": {
+                "192.168.137.116": [
+                    {
+                        "type": "client",
+                        "configuration": {
+                            "client_ip": "192.168.227.52",
+                            "gateway_ip": "192.168.227.79",
+                            "ap_name": "GalaxyNote10+25bc",
+                            "password": "qbil0530",
+                            "netmask": "255.255.255.0",
+                            "interface_mode" : "STATIC",
+                            "protocol" : "RealTime",
+                            "channel": 5,
+                            "server_ip": "192.168.227.51"
+                            }
+                        }
+                    ]
+                },
+                "server": {
+                    "ssid": "GalaxyNote10+25bc",
+                    "password": "qbil0530",
+                    "ip_address": "192.168.227.51",
+                    "net_mask": "255.255.255.0",
+                    "gateway_address": "192.168.227.79",
+                    "interface_mode": "STATIC"
+                },
+                "duration": 10,
+                "folder_name": "banC"
+            }
+        self.master.display()
         
 
     def new_popup(self):
@@ -148,7 +179,7 @@ class Header(tb.Frame):
         requests_thread.start()
         # requests.post("http://127.0.0.1:8888/run_simulation",json = payload)
         self.waiting_thread = requests_thread
-        self.popup.grab_set()
+        self.popup.grab_set()   
         self.popup.after(0, self.check_thread)
         self.popup.mainloop()
 

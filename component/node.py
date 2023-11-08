@@ -29,6 +29,7 @@ class Node(tb.Frame):
             this.configure(highlightbackground="#28a745", highlightcolor="#28a745")
         else:
             this.configure(highlightbackground="#dc3545", highlightcolor="#dc3545")
+    
     def select_interface_mode(self):
         if self.interface_mode.get() == "DHCP":
             self.e_ip.delete(0, 'end')
@@ -79,7 +80,7 @@ class Node(tb.Frame):
         self.e = tk.Entry(self.frame)
         self.e.grid(row=0, column=1,padx=(0,5),pady=5)
         self.e.insert(0,f"{self.node_ip}")
-        self.e["state"] = "readonly"
+        #self.e["state"] = "readonly"
         tb.Label(self.frame, text=f"mode : ").grid(row=0, column=2,padx=5,pady=5,sticky='w')
         self.frame.columnconfigure(3, weight=100)
         self.rbframe = tb.Frame(self.frame)
@@ -89,16 +90,13 @@ class Node(tb.Frame):
         tb.Label(self.rbframe, text="ip : ").grid(row=1, column=2,padx=5,pady=5)
         self.e_ip = tk.Entry(self.rbframe,highlightbackground="red")
         self.e_ip.grid(row=1, column=3,padx=(0,5),pady=5)
-        self.e_ip["state"] = "disabled"
         tb.Label(self.rbframe, text="subnet :   ").grid(row=1, column=4,padx=(5,0),pady=5,sticky='e')
         self.e_subnet = tk.Entry(self.rbframe)
         self.e_subnet.grid(row=1, column=5,padx=(0,5),pady=5)
-        self.e_subnet["state"] = "disabled"
         tb.Label(self.rbframe, text="gateway : ").grid(row=2, column=4,padx=5,pady=5,sticky="w")
         self.e_gateway = tk.Entry(self.rbframe)
         self.e_gateway.grid(row=2, column=5,padx=(0,5),pady=5)
-        self.e_gateway["state"] = "disabled"
-
+        self.select_interface_mode()
         self.rbframe.grid(row=1, column=1,padx=(0,5),pady=5,sticky="w",columnspan=3)
         
         self.f = tb.Frame(self.frame)
@@ -141,6 +139,15 @@ class Node(tb.Frame):
             self.cb_channel.grid(pady=5,row=0,column=3)
             self.cb_channel.bind("<MouseWheel>", self.disable_mousewheel)
             self.f.grid(row=3, column=1,padx=(0,5),pady=5,sticky="w",columnspan=4)
-
+        
+        self.e_ssid.insert(0,ssid)
+        self.e_password.insert(0,password)
+        self.e_ip.insert(0,ip_address)
+        self.e_subnet.insert(0,net_mask)
+        self.e_gateway.insert(0,gateway_address)
+        self.check_ip_format(None, self.e_ip)
+        self.check_ip_format(None, self.e_subnet)
+        self.check_ip_format(None, self.e_gateway)
+        
         self.frame.pack(pady=(0,5),padx=5)
         

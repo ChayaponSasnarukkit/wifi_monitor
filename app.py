@@ -74,8 +74,20 @@ class MyApp(tk.Tk):
         self.popup.wait_window()
 
     def display(self):
-        self.no = 1
-        #todo
+        for e in self.ListObjectNode :
+            e.pack_forget()
+        self.ListObjectNode = []
+
+        self.node = Node(self.subframeBody, 1, "host", "server", self.ListNode["server"]["ssid"], self.ListNode["server"]["password"], self.ListNode["server"]["ip_address"], self.ListNode["server"]["net_mask"], self.ListNode["server"]["gateway_address"], self.ListNode["server"]["interface_mode"],"", "", "")
+        self.node.pack(padx=10, pady=10,anchor="w")
+        self.ListObjectNode.append(self.node)
+        self.no = 2
+        for e in self.ListNode["nodes"] :
+            self.node = Node(self.subframeBody, self.no, e, self.ListNode["nodes"][e][0]["type"], self.ListNode["nodes"][e][0]["configuration"]["ap_name"], self.ListNode["nodes"][e][0]["configuration"]["password"], self.ListNode["nodes"][e][0]["configuration"]["client_ip"], self.ListNode["nodes"][e][0]["configuration"]["netmask"], self.ListNode["nodes"][e][0]["configuration"]["gateway_ip"], self.ListNode["nodes"][e][0]["configuration"]["interface_mode"], self.ListNode["nodes"][e][0]["configuration"]["protocol"], self.ListNode["nodes"][e][0]["configuration"]["channel"], self.ListNode["nodes"][e][0]["configuration"]["server_ip"])
+            self.no+=1
+            self.node.pack(padx=10, pady=10,anchor="w")
+            self.ListObjectNode.append(self.node)
+
         self.no += 1
         self.subframeBody.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
@@ -157,7 +169,7 @@ class MyApp(tk.Tk):
         self.subframeBody.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
-        self.frameBody.pack(padx=30, pady=(20,40), fill=tk.BOTH, expand=True)
+        self.frameBody.pack(padx=30, pady=(15,40), fill=tk.BOTH, expand=True)
         #self.canvas.config(width=600)
 
         self.update()
@@ -167,8 +179,7 @@ class MyApp(tk.Tk):
         self.ListObjectNode.append(self.node)
 
         self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
-
-        self.display()
+        self.no = 2
 
 if __name__ == "__main__":
     app = MyApp()
