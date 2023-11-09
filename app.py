@@ -13,7 +13,7 @@ class MyApp(tk.Tk):
         regexp = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})$"
         if bool(re.match(regexp, node_ip)) :
             #to do check duplicate ip
-            self.node = Node(self.subframeBody,self.no,node_ip,"client","","","","","","DHCP","RealTime",2.4,"")
+            self.node = Node(self.subframeBody,self.no,node_ip,"client","","","","","","DHCP",2.4,"RealTime","")
             self.no+=1
             self.node.pack(padx=10, pady=10,anchor="w")
             self.ListObjectNode.append(self.node)
@@ -36,9 +36,10 @@ class MyApp(tk.Tk):
                 self.ListNode["server"]["ip_address"] = e.e_ip.get()
                 self.ListNode["server"]["net_mask"] = e.e_subnet.get()
                 self.ListNode["server"]["gateway_address"] = e.e_gateway.get()
+                self.ListNode["server"]["channel"] = e.cb_channel.get()
                 self.ListNode["server"]["interface_mode"] = e.interface_mode.get()
             elif e.mode.get() == "client" :
-                print("ok")
+                e.node_ip = e.e.get()
                 self.ListNode["nodes"][e.node_ip] = [{"type":"","configuration":{}}]
                 self.ListNode["nodes"][e.node_ip][0]["type"] = e.mode.get()
                 self.ListNode["nodes"][e.node_ip][0]["configuration"]["client_ip"] = e.e_ip.get()
@@ -48,10 +49,8 @@ class MyApp(tk.Tk):
                 self.ListNode["nodes"][e.node_ip][0]["configuration"]["netmask"] = e.e_subnet.get()
                 self.ListNode["nodes"][e.node_ip][0]["configuration"]["interface_mode"] = e.interface_mode.get()
                 self.ListNode["nodes"][e.node_ip][0]["configuration"]["protocol"] = e.protocol.get()
-                self.ListNode["nodes"][e.node_ip][0]["configuration"]["channel"] = e.channel.get()
+                self.ListNode["nodes"][e.node_ip][0]["configuration"]["channel"] = e.cb_channel.get()
                 self.ListNode["nodes"][e.node_ip][0]["configuration"]["server_ip"] = e.server_ip
-            
-        print(self.ListNode)
                 
     
     def node_popup(self):
@@ -70,6 +69,7 @@ class MyApp(tk.Tk):
         self.button.configure(bg="white",activebackground="white")
 
         self.entry.bind("<Return>", lambda event: self.on_enter(event))
+        self.entry.focus_set()
         self.popup.grab_set()
         self.popup.wait_window()
 
@@ -77,13 +77,12 @@ class MyApp(tk.Tk):
         for e in self.ListObjectNode :
             e.pack_forget()
         self.ListObjectNode = []
-
-        self.node = Node(self.subframeBody, 1, "host", "server", self.ListNode["server"]["ssid"], self.ListNode["server"]["password"], self.ListNode["server"]["ip_address"], self.ListNode["server"]["net_mask"], self.ListNode["server"]["gateway_address"], self.ListNode["server"]["interface_mode"],"", "", "")
+        self.node = Node(self.subframeBody, 1, "host", "server", self.ListNode["server"]["ssid"], self.ListNode["server"]["password"], self.ListNode["server"]["ip_address"], self.ListNode["server"]["net_mask"], self.ListNode["server"]["gateway_address"], self.ListNode["server"]["interface_mode"],self.ListNode["server"]["channel"], "" , "")
         self.node.pack(padx=10, pady=10,anchor="w")
         self.ListObjectNode.append(self.node)
         self.no = 2
         for e in self.ListNode["nodes"] :
-            self.node = Node(self.subframeBody, self.no, e, self.ListNode["nodes"][e][0]["type"], self.ListNode["nodes"][e][0]["configuration"]["ap_name"], self.ListNode["nodes"][e][0]["configuration"]["password"], self.ListNode["nodes"][e][0]["configuration"]["client_ip"], self.ListNode["nodes"][e][0]["configuration"]["netmask"], self.ListNode["nodes"][e][0]["configuration"]["gateway_ip"], self.ListNode["nodes"][e][0]["configuration"]["interface_mode"], self.ListNode["nodes"][e][0]["configuration"]["protocol"], self.ListNode["nodes"][e][0]["configuration"]["channel"], self.ListNode["nodes"][e][0]["configuration"]["server_ip"])
+            self.node = Node(self.subframeBody, self.no, e, self.ListNode["nodes"][e][0]["type"], self.ListNode["nodes"][e][0]["configuration"]["ap_name"], self.ListNode["nodes"][e][0]["configuration"]["password"], self.ListNode["nodes"][e][0]["configuration"]["client_ip"], self.ListNode["nodes"][e][0]["configuration"]["netmask"], self.ListNode["nodes"][e][0]["configuration"]["gateway_ip"], self.ListNode["nodes"][e][0]["configuration"]["interface_mode"], self.ListNode["nodes"][e][0]["configuration"]["channel"], self.ListNode["nodes"][e][0]["configuration"]["protocol"], self.ListNode["nodes"][e][0]["configuration"]["server_ip"])
             self.no+=1
             self.node.pack(padx=10, pady=10,anchor="w")
             self.ListObjectNode.append(self.node)
@@ -116,12 +115,14 @@ class MyApp(tk.Tk):
         self.cursor = self.conn.cursor()
         self.cursor.execute(f'''SELECT ScenarioName FROM template
                         ''')
-        self.ScenarioNamelist = self.cursor.fetchall()
+        output = self.cursor.fetchall()
+        self.ScenarioNamelist = []
+        for i in output :
+            self.ScenarioNamelist.append(i[0])
         self.ScenarioName = tk.StringVar()
         self.ScenarioName.set("select scenario")
         self.Describe = tk.StringVar()
-        self.Describe.set(".....")
-        #to do when create object server mode must create dump
+        self.Describe.set("")
         self.ListNode = {
             "nodes": {
             },
@@ -131,7 +132,8 @@ class MyApp(tk.Tk):
                 "ip_address": "",
                 "net_mask": "",
                 "gateway_address": "",
-                "interface_mode": "DHCP"
+                "interface_mode": "DHCP",
+                "channel": 2.4
             },
             "duration": 10,
             "folder_name": "banC"
@@ -174,7 +176,7 @@ class MyApp(tk.Tk):
 
         self.update()
 
-        self.node = Node(self.subframeBody, 1, "host", "server", self.ListNode["server"]["ssid"], self.ListNode["server"]["password"], self.ListNode["server"]["ip_address"], self.ListNode["server"]["net_mask"], self.ListNode["server"]["gateway_address"], self.ListNode["server"]["interface_mode"],"","","")
+        self.node = Node(self.subframeBody, 1, "host", "server", self.ListNode["server"]["ssid"], self.ListNode["server"]["password"], self.ListNode["server"]["ip_address"], self.ListNode["server"]["net_mask"], self.ListNode["server"]["gateway_address"], self.ListNode["server"]["interface_mode"],2.4,"","")
         self.node.pack(padx=10, pady=10,anchor="w")
         self.ListObjectNode.append(self.node)
 
