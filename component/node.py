@@ -3,7 +3,7 @@ import ttkbootstrap as tb
 from tkinter import messagebox
 import re
 
-class Node(tb.Frame):
+class Node(tk.Frame):
 
     def disable_mousewheel(self,event):
         return "break"
@@ -19,6 +19,11 @@ class Node(tb.Frame):
         else:
             self.e_password.config(show="*")
             self.show_button.config(image=self.hide_icon, command=self.show_password)
+
+    def delete_node(self) :
+        self.master.convert_to_json()
+        self.master.ListNode["nodes"].pop(self.node_ip)
+        self.master.display()
 
     def hide_password(self):
         self.show_password()
@@ -52,8 +57,9 @@ class Node(tb.Frame):
             self.e_subnet["state"] = "normal"
             self.e_gateway["state"] = "normal"
 
-    def __init__(self, master, index,node_ip, mode, ssid, password, ip_address, net_mask, gateway_address, interface_mode, channel, protocol, server_ip):
-        super().__init__(master)
+    def __init__(self, subframe,master , index,node_ip, mode, ssid, password, ip_address, net_mask, gateway_address, interface_mode, channel, protocol, server_ip):
+        super().__init__(subframe)
+        self.no = index
         #Server
         self.master = master
         self.index = index
@@ -131,7 +137,7 @@ class Node(tb.Frame):
             self.modeCB.bind("<<ComboboxSelected>>", lambda event, this = self.modeCB: self.on_combobox_select(event,this))
 
             self.cross_icon = tk.PhotoImage(file="icon/cross.png")
-            self.b_cross = tk.Button(self.frame,image=self.cross_icon,compound=tk.CENTER, width=25, height=25)
+            self.b_cross = tk.Button(self.frame,image=self.cross_icon,compound=tk.CENTER, width=25, height=25,command=self.delete_node)
             self.b_cross.grid(row=0, column=3,padx=10,pady=5,sticky='e')
             self.b_cross.configure(bg="white",activebackground="white")
 
@@ -142,7 +148,6 @@ class Node(tb.Frame):
             self.cb_protocol.bind("<<ComboboxSelected>>", lambda event, this = self.cb_protocol: self.on_combobox_select(event,this))
             self.cb_protocol.bind("<MouseWheel>", self.disable_mousewheel)
             self.f.grid(row=3, column=1,padx=(0,5),pady=5,sticky="w",columnspan=4)
-        
         self.e.insert(0,node_ip)
         self.e_ssid.insert(0,ssid)
         self.e_password.insert(0,password)

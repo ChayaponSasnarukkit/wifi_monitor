@@ -7,7 +7,7 @@ import time
 import json
 from component.node import Node
 
-class Header(tb.Frame):
+class Header(tk.Frame):
 
     def delete_scenario(self) :
         self.master.conn.execute(f"DELETE FROM template WHERE ScenarioName = '{self.combobox.get()}'")
@@ -127,7 +127,7 @@ class Header(tb.Frame):
 
     def save_scenario_popup(self) :
         if self.master.ScenarioName.get() == "select scenario" :
-            self.save_as_scenario()
+            self.save_as_scenario_popup()
         else :
             self.popup = tb.Toplevel(self)
             self.popup.title("save")
@@ -219,7 +219,7 @@ class Header(tb.Frame):
             for i in self.master.ListObjectNode :
                 i.pack_forget()
             self.master.ListObjectNode = []
-            self.node = Node(self.master.subframeBody, 1, "host", "server", self.master.ListNode["server"]["ssid"], self.master.ListNode["server"]["password"], self.master.ListNode["server"]["ip_address"], self.master.ListNode["server"]["net_mask"], self.master.ListNode["server"]["gateway_address"], self.master.ListNode["server"]["interface_mode"],2.4,"","")
+            self.node = Node(self.master.subframeBody,self.master, 1, "host", "server", self.master.ListNode["server"]["ssid"], self.master.ListNode["server"]["password"], self.master.ListNode["server"]["ip_address"], self.master.ListNode["server"]["net_mask"], self.master.ListNode["server"]["gateway_address"], self.master.ListNode["server"]["interface_mode"],2.4,"","")
             self.master.ListObjectNode.append(self.node)
             config = {
                 "nodes": {
@@ -276,8 +276,12 @@ class Header(tb.Frame):
         self.popup.wait_window()
     
     def edit_describe(self):
-        self.master.Describe.set(self.e_edit_popup.get())
-        self.popup.destroy()
+        text = self.e_edit_popup.get()
+        if len(text) > 48 :
+            messagebox.showerror("error",f"input can't exceed 48 character \n your input is {len(text)}")
+        else :
+            self.master.Describe.set(self.e_edit_popup.get())
+            self.popup.destroy()
 
     def disable_mousewheel(self,event):
         return "break"
@@ -310,8 +314,8 @@ class Header(tb.Frame):
 
         tb.Label(self,text="Scenario :").grid(row=0, column=0, padx=5, pady=5)
         self.labelframe = tb.Labelframe(self,text="Describe")
-        self.labelframe.grid(row=2, column=0, padx=5, pady=5,sticky="ewn",columnspan=2,)
-        tb.Label(self.labelframe, textvariable=self.master.Describe,wraplength=300).pack(side=tk.LEFT,padx=5)
+        self.labelframe.grid(row=2, column=0, padx=5, pady=5,sticky="ewn",columnspan=2)
+        tb.Label(self.labelframe, textvariable=self.master.Describe).pack(side=tk.LEFT,padx=5)
 
         self.edit_icon = tk.PhotoImage(file="icon/edit.png")
         self.b_edit = tk.Button(self,image=self.edit_icon,compound=tk.CENTER, width=20, height=20, command=self.edit_popup)
