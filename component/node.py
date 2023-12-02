@@ -57,6 +57,7 @@ class Node(tk.Frame):
             self.e_subnet["state"] = "normal"
             self.e_gateway["state"] = "normal"
 
+    #modify
     def __init__(self, subframe,master , index,node_ip, mode, ssid, password, ip_address, net_mask, gateway_address, interface_mode, channel, protocol, server_ip):
         super().__init__(subframe)
         self.no = index

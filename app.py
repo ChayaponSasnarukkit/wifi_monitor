@@ -12,7 +12,7 @@ class MyApp(tk.Tk):
         node_ip = self.entry.get()
         regexp = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})$"
         if bool(re.match(regexp, node_ip)) :
-            #to do check duplicate ip
+            #modify
             self.node = Node(self.subframeBody, self,self.no,node_ip,"client","","","","","","DHCP",2.4,"RealTime","")
             data = {
                 "type": "client",
@@ -44,6 +44,7 @@ class MyApp(tk.Tk):
 
     def convert_to_json(self):
         self.ListNode = {"nodes":{},"server":{},"duration":10,"folder_name":"banC"}
+        #modify
         for e in self.ListObjectNode :
             if e.mode.get() == "server" :
                 self.ListNode["server"]["ssid"] = e.e_ssid.get()
@@ -92,12 +93,13 @@ class MyApp(tk.Tk):
         for e in self.ListObjectNode :
             e.pack_forget()
         self.ListObjectNode = []
-        #this
+        #modify
         self.node = Node(self.subframeBody, self, 1, "host", "server", self.ListNode["server"]["ssid"], self.ListNode["server"]["password"], self.ListNode["server"]["ip_address"], self.ListNode["server"]["net_mask"], self.ListNode["server"]["gateway_address"], self.ListNode["server"]["interface_mode"],self.ListNode["server"]["channel"], "" , "")
         self.node.pack(padx=10, pady=10,anchor="w")
         self.ListObjectNode.append(self.node)
         self.no = 2
         for e in self.ListNode["nodes"] :
+            #modify
             self.node = Node(self.subframeBody, self, self.no, e, self.ListNode["nodes"][e][0]["type"], self.ListNode["nodes"][e][0]["configuration"]["ap_name"], self.ListNode["nodes"][e][0]["configuration"]["password"], self.ListNode["nodes"][e][0]["configuration"]["client_ip"], self.ListNode["nodes"][e][0]["configuration"]["netmask"], self.ListNode["nodes"][e][0]["configuration"]["gateway_ip"], self.ListNode["nodes"][e][0]["configuration"]["interface_mode"], self.ListNode["nodes"][e][0]["configuration"]["channel"], self.ListNode["nodes"][e][0]["configuration"]["protocol"], self.ListNode["nodes"][e][0]["configuration"]["server_ip"])
             self.no+=1
             self.node.pack(padx=10, pady=10,anchor="w")
@@ -139,7 +141,8 @@ class MyApp(tk.Tk):
         self.ScenarioName.set("select scenario")
         self.Describe = tk.StringVar()
         self.Describe.set("")
-        self.ListNode = {
+        #modify
+        self.blank_node = {
             "nodes": {
             },
             "server": {
@@ -154,6 +157,7 @@ class MyApp(tk.Tk):
             "duration": 10,
             "folder_name": "banC"
         }
+        self.ListNode = self.blank_node
         self.ListObjectNode = []
 
         self.header = Header(self)
@@ -188,7 +192,7 @@ class MyApp(tk.Tk):
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
         self.frameBody.pack(padx=30, pady=(15,40), fill=tk.BOTH, expand=True)
-
+        #modify
         self.node = Node(self.subframeBody, self, 1, "host", "server", self.ListNode["server"]["ssid"], self.ListNode["server"]["password"], self.ListNode["server"]["ip_address"], self.ListNode["server"]["net_mask"], self.ListNode["server"]["gateway_address"], self.ListNode["server"]["interface_mode"],2.4,"","")
         self.node.pack(padx=10, pady=10,anchor="w")
         self.ListObjectNode.append(self.node)

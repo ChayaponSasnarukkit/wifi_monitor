@@ -16,21 +16,8 @@ class Header(tk.Frame):
         self.combobox["values"] = self.master.ScenarioNamelist
         self.combobox.set("select scenario")
         self.master.Describe.set("")
-        self.master.ListNode = {
-            "nodes": {
-            },
-            "server": {
-                "ssid": "",
-                "password": "",
-                "ip_address": "",
-                "net_mask": "",
-                "gateway_address": "",
-                "interface_mode": "DHCP",
-                "channel": 2.4
-            },
-            "duration": 10,
-            "folder_name": "banC"
-        }
+        #modify
+        self.master.ListNode = self.temp
         self.master.display()
         self.popup.destroy()
 
@@ -221,21 +208,8 @@ class Header(tk.Frame):
             self.master.ListObjectNode = []
             self.node = Node(self.master.subframeBody,self.master, 1, "host", "server", self.master.ListNode["server"]["ssid"], self.master.ListNode["server"]["password"], self.master.ListNode["server"]["ip_address"], self.master.ListNode["server"]["net_mask"], self.master.ListNode["server"]["gateway_address"], self.master.ListNode["server"]["interface_mode"],2.4,"","")
             self.master.ListObjectNode.append(self.node)
-            config = {
-                "nodes": {
-                },
-                "server": {
-                    "ssid": "",
-                    "password": "",
-                    "ip_address": "",
-                    "net_mask": "",
-                    "gateway_address": "",
-                    "interface_mode": "DHCP",
-                    "channel": 2.4
-                },
-                "duration": 10,
-                "folder_name": "banC"
-            }
+            #modify
+            config = self.temp
             self.master.ListNode = config
             config = json.dumps(config)
             self.master.conn.execute(f"INSERT INTO template VALUES ('{name}','{describe}','{config}')")
@@ -311,6 +285,9 @@ class Header(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
+
+        #modify
+        self.temp = self.master.blank_node
 
         tb.Label(self,text="Scenario :").grid(row=0, column=0, padx=5, pady=5)
         self.labelframe = tb.Labelframe(self,text="Describe")
