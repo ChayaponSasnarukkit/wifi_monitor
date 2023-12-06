@@ -11,6 +11,7 @@ class MyApp(tk.Tk):
     def add_node(self) :
         node_ip = self.entry.get()
         regexp = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})$"
+        print(self.no)
         if bool(re.match(regexp, node_ip)) :
             #modify
             self.node = Node(self.subframeBody, self,self.no,node_ip,"client","","","","","","DHCP",2.4,"RealTime","")
@@ -105,7 +106,6 @@ class MyApp(tk.Tk):
             self.node.pack(padx=10, pady=10,anchor="w")
             self.ListObjectNode.append(self.node)
 
-        self.no += 1
         self.subframeBody.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
@@ -198,6 +198,7 @@ class MyApp(tk.Tk):
         self.ListObjectNode.append(self.node)
         self.update()
         self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
+        #change
         self.no = 2
 
 if __name__ == "__main__":
